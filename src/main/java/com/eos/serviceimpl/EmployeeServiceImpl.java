@@ -32,6 +32,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private StatusHistoryRepository statusHistoryRepository;
+	
+	@Autowired
+	private NotificationServiceImple notificationServiceImple;
 
 	public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
 		super();
@@ -43,25 +46,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (checkDuplicateEmailAndAddharNo(employeeDto.getEmail(), employeeDto.getAadhaarNumber())) {
 			throw new RuntimeException("Email or Aadhaar number already exists");
 		}
-//		if(checkDuplicateEmail(employeeDto.getEmail()) && checkDuplicateAdhaarNo(employeeDto.getAadhaarNumber())) {
-//			throw new RuntimeException("Email And addharNo should be unique");
-//		}else if(checkDuplicateEmail(employeeDto.getEmail())){
-//			throw new RuntimeException("Email is duplicated ");
-//		
-//		}else if(checkDuplicateAdhaarNo(employeeDto.getAadhaarNumber())) {
-//			throw new RuntimeException("Adhaar no is duplicated");
-//		}else {
-//		
-	
 		String fileName = fileService.uploadImage(path, file, employeeDto.getAadhaarNumber());
 		employeeDto.getAadhaarNumber();
 		employeeDto.setAadharFilename(fileName);
+		String name = employeeDto.getFullName();
+		if (name != null && !name.isEmpty()) {
+			String[] nameParts = name.split(" ");
+			StringBuilder formattedName = new StringBuilder();
+			for (int i = 0; i < nameParts.length; i++) {
+				String part = nameParts[i];
+				if (!part.isEmpty()) {
+					String formattedPart = part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase();
+					formattedName.append(formattedPart);
+					if (i < nameParts.length - 1) {
+						formattedName.append(" ");
+					}
+				}
+			}
+			employeeDto.setFullName(formattedName.toString());
+		}
+
 		EmployeeEntity employeeEntity = EmployeeModelMapper.mapToEmployeeEntity(employeeDto);
 		EmployeeEntity savedEmployeeEntity = employeeRepository.save(employeeEntity);
 		statusHistoryService.createInitialStatus(savedEmployeeEntity);
 		updateEmployeeStatus(savedEmployeeEntity);
+		notificationServiceImple.notifyAdminNewEmployee(savedEmployeeEntity.getId());
 		return EmployeeModelMapper.mapToEmployeeDto(savedEmployeeEntity);
-//		}
 	}
 
 	@Override

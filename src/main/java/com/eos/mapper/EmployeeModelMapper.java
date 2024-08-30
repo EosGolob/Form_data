@@ -7,12 +7,9 @@ import com.eos.entity.EmployeeEntity;
 
 public class EmployeeModelMapper {
 
-//	@Autowired
-//	private ModelMapper modelMapper;
-	
+
 	public  static EmployeeDto mapToEmployeeDto(EmployeeEntity employee) {
-//		EmployeeDto employeeDto = this.modelMapper.map(employeeEntity,EmployeeDto.class);
-//		return employeeDto;
+
 		
 		return new EmployeeDto(
 				employee.getId(),
@@ -47,8 +44,7 @@ public class EmployeeModelMapper {
 	}
 	
 	public static EmployeeEntity mapToEmployeeEntity(EmployeeDto employeeDto) {
-//		EmployeeEntity employeeEntity = this.modelMapper.map(employeeDto,EmployeeEntity.class);
-//		return employeeEntity;
+
 		 return new EmployeeEntity(
 				  employeeDto.getId(),
 				  employeeDto.getFullName(),

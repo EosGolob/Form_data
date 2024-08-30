@@ -47,10 +47,6 @@ public class EmployeeController {
 			if (employeeDto == null || image == null || image.isEmpty()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
-
-			// Debugging statements
-			System.out.println("EmployeeDto: " + employeeDto);
-			System.out.println("Image Original Filename: " + image.getOriginalFilename());
 			EmployeeDto savedEmployee = employeeService.createEmployee(employeeDto, image, path);
 			return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
 		} catch (IOException e) {
