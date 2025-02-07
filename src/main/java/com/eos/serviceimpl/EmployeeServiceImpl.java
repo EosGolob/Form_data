@@ -1,7 +1,8 @@
 package com.eos.serviceimpl;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.eos.dto.EmployeeDto;
 import com.eos.entity.EmployeeEntity;
-import com.eos.entity.InterviewProcesses;
 import com.eos.entity.StatusHistory;
+import com.eos.exception.DuplicateRecordException;
 import com.eos.mapper.EmployeeModelMapper;
 import com.eos.repository.EmployeeRepository;
 import com.eos.repository.StatusHistoryRepository;
@@ -32,7 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private StatusHistoryRepository statusHistoryRepository;
-	
+
 	@Autowired
 	private NotificationServiceImple notificationServiceImple;
 
@@ -44,39 +45,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public EmployeeDto createEmployee(EmployeeDto employeeDto, MultipartFile file, String path) throws IOException {
 		if (checkDuplicateEmailAndAddharNo(employeeDto.getEmail(), employeeDto.getAadhaarNumber())) {
-			throw new RuntimeException("Email or Aadhaar number already exists");
+//			throw new RuntimeException("Email or Aadhaar number already exists");
+			  throw new DuplicateRecordException("Email or Aadhaar number already exists");
 		}
 		String fileName = fileService.uploadImage(path, file, employeeDto.getAadhaarNumber());
-		employeeDto.getAadhaarNumber();
 		employeeDto.setAadharFilename(fileName);
-		String name = employeeDto.getFullName();
-		if (name != null && !name.isEmpty()) {
-			String[] nameParts = name.split(" ");
-			StringBuilder formattedName = new StringBuilder();
-			for (int i = 0; i < nameParts.length; i++) {
-				String part = nameParts[i];
-				if (!part.isEmpty()) {
-					String formattedPart = part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase();
-					formattedName.append(formattedPart);
-					if (i < nameParts.length - 1) {
-						formattedName.append(" ");
-					}
-				}
-			}
-			employeeDto.setFullName(formattedName.toString());
-		}
-
+		String formattedName = capitalizeStringAfterSpacing(employeeDto.getFullName());
+		employeeDto.setFullName(formattedName);
 		EmployeeEntity employeeEntity = EmployeeModelMapper.mapToEmployeeEntity(employeeDto);
 		EmployeeEntity savedEmployeeEntity = employeeRepository.save(employeeEntity);
 		statusHistoryService.createInitialStatus(savedEmployeeEntity);
 		updateEmployeeStatus(savedEmployeeEntity);
-		notificationServiceImple.notifyAdminNewEmployee(savedEmployeeEntity.getId());
+		notificationServiceImple.notifyAdminNewEmployee(savedEmployeeEntity.getId(), savedEmployeeEntity.getFullName());
 		return EmployeeModelMapper.mapToEmployeeDto(savedEmployeeEntity);
 	}
 
 	@Override
 	public boolean checkDuplicateEmailAndAddharNo(String email, String aadhaarNumber) {
-		// TODO Auto-generated method stub
 		boolean emailExists = employeeRepository.existsByEmail(email);
 		boolean addharnoExists = employeeRepository.existsByAadhaarNumber(aadhaarNumber);
 		return emailExists || addharnoExists;
@@ -103,14 +88,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 	}
 
-	private void setStatusHistoryRecored(Long employeeId, InterviewProcesses savedInterviewProcess, String newStatus,
-			EmployeeEntity employee) {
-		StatusHistory statusHistory = new StatusHistory();
-		statusHistory.setEmployee(employee);
-		statusHistory.setInterviewProcess(savedInterviewProcess);
-		statusHistory.setStatus(newStatus);
-		statusHistory.setChangesDateTime(LocalDateTime.now());
-		statusHistoryRepository.save(statusHistory);
+	private String capitalizeStringAfterSpacing(String name) {
+		if (name == null || name.isEmpty()) {
+			return name;
+		}
+		return Arrays.stream(name.split(" ")).map(
+				part -> part.isEmpty() ? part : part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase())
+				.collect(Collectors.joining(" "));
 	}
 
 }

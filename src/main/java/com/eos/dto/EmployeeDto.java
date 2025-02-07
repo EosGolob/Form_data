@@ -6,7 +6,9 @@ import java.util.List;
 import com.eos.entity.InterviewProcesses;
 import com.eos.entity.StatusHistory;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -27,16 +29,19 @@ public class EmployeeDto {
 	private String fullName;
 	
 	@NotNull(message = "Email Cannot be Null")
+	@Pattern(regexp = "\\S+@\\S+\\.\\S+", message = "Invalid email format")
 	private String email;
 	
-	@NotNull(message = "Job Profile Cannot be Null")
+//	@NotNull(message = "Job Profile Cannot be Null")
 	private String jobProfile;
 	
 	@NotNull(message = "Qualification Cannot be Null")
 	private String Qualification;
 	
 	@NotNull(message = "Mobile No Cannot be Null")
+//    @Pattern(regexp = "\\d{10}", message = "Invalid phone number format")
 	private Long mobileNo;
+//	private String mobileNo;
 	
 	@NotNull(message = "Permanent Address Cannot be Null")
 	private String permanentAddress;
@@ -49,6 +54,9 @@ public class EmployeeDto {
 	
 	@NotNull(message = "Previous Organisation Cannot be Null")
 	private String previousOrganisation;
+	
+	@NotNull(message = "work Experience Cannot be Null")
+	private String workExp;
 	
 	@NotNull(message = "DOB Cannot be Null")
 	private Date dob;
@@ -74,13 +82,14 @@ public class EmployeeDto {
 	private List<StatusHistory> statusHistories;
     private List<InterviewProcesses> interviewProcesses;
 	@NotNull(message = "Aadhar no Cannot be Null")
+	@Pattern(regexp = "\\d{12}", message = "Aadhaar number must be 12 digits")
 	private String aadhaarNumber;
 	
 	@NotNull(message = "Languages Cannot be Null")
 	private String languages;
 	
 	@NotNull(message = "Experience Cannot be Null")
-	private int experience;
+	private Float experience;
 	
 	@NotNull(message = "Source Cannot be Null")
 	private String source;

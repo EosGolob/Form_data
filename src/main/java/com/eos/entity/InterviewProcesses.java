@@ -48,7 +48,7 @@ public class InterviewProcesses {
 	@Column(name = "status")
 	private String status;
 	
-	@ManyToOne(fetch = FetchType.LAZY , optional = true)
-	@JoinColumn(name = "managerDetails_id")
-	private ManagerDetails managerDetails;
+//	@ManyToOne(fetch = FetchType.LAZY , optional = true)
+//	@JoinColumn(name = "managerDetails_id")
+//	private ManagerDetails managerDetails;
 }

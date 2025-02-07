@@ -24,7 +24,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin("*")
+@CrossOrigin(origins = {"http://localhost:3000","http://20.193.159.186:3000"})
+//@CrossOrigin(originPatterns = "*")
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
@@ -54,8 +55,22 @@ public class EmployeeController {
 		}
 
 	}
-	
-	
+	/**
+	@PostMapping("/createEmployee")
+	public ResponseEntity<EmployeeDto> createEmployee(@Valid @RequestPart("employee") EmployeeDto employeeDto,
+			@RequestParam(value = "image",required = false) MultipartFile image) {
+		try {
+			if (employeeDto == null) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			EmployeeDto savedEmployee = employeeService.createEmployee(employeeDto, image, path);
+			return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
+		} catch (IOException e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	*/
 
 	
 

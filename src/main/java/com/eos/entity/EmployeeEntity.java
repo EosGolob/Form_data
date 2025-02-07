@@ -4,8 +4,6 @@ package com.eos.entity;
 import java.util.Date;
 import java.util.List;
 
-import org.antlr.v4.runtime.misc.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -41,7 +39,7 @@ public class EmployeeEntity {
 	@Column(name = "email",nullable = false,unique = true)
 	private String email;
 	
-	@Column(name = "job_profile" ,nullable = false)
+	@Column(name = "job_profile")
 	private String jobProfile;
 	
 	@Column(name = "Qualification", nullable = false)
@@ -62,6 +60,9 @@ public class EmployeeEntity {
 	@Column(name = "previous_Organisation", nullable = false)
 	private String previousOrganisation;
 	
+	@Column(name = "work_Exp",nullable = false)
+	private String workExp;
+	
 	@Column(name = "dob", nullable = false)
 	private Date dob;
 	
@@ -78,7 +79,7 @@ public class EmployeeEntity {
 	private String languages;
 	
 	@Column(name ="experience", nullable = false)
-	private int experience;
+	private Float experience;
 	
 	@Column(name = "source", nullable = false)
 	private String source;

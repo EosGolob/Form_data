@@ -20,8 +20,8 @@ public class NotificationServiceImple implements NotificationService {
 	private NotificationRepository notificationRepository;
 	
 	@Override
-	public void notifyAdminNewEmployee(Long employeeId) {
-        String notificationMessage = "A new employee with ID " + employeeId + " has been created.";  
+	public void notifyAdminNewEmployee(Long employeeId, String name) {
+        String notificationMessage =  name + " has been Register form.";  
         Notification notification = new Notification(employeeId,notificationMessage, false);
         notificationRepository.save(notification);
 		notificationWebSocketHandler.sendNotification(notificationMessage);

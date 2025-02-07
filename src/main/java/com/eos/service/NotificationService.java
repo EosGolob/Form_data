@@ -6,6 +6,6 @@ import com.eos.entity.Notification;
 
 public interface NotificationService {
  
-	public void notifyAdminNewEmployee(Long employeeId);
+	public void notifyAdminNewEmployee(Long employeeId, String string);
 	List<Notification> getAllNotifications();
 }
